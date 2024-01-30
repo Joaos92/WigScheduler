@@ -1,0 +1,52 @@
+﻿<div class="calendar">
+    <div style="display: flex; justify-content: space-between ;align-items: center; position: relative;">
+        @if (!string.IsNullOrEmpty(SelectionMessage))
+        {
+            <div @onclick="OnSchedulePeriodClick" class="selection-message" style="@SelectionMessageStyle">
+                @SelectionMessage
+            </div>
+        }
+
+        <button class="calendar-prev" @onclick="PreviousMonth">
+            <svg width="7.535" height="13.179" viewBox="0 0 7.535 13.179">
+                <path d="M6.592,5.264,11.575.277a.938.938,0,0,1,1.33,0,.95.95,0,0,1,0,1.334L7.259,7.261a.94.94,0,0,1-1.3.027L.275,1.615A.942.942,0,0,1,1.6.281Z" transform="translate(7.535) rotate(90)" fill="#515163" />
+            </svg>
+        </button>
+
+        <div style="width: 40%;">
+            <CalendarHeader DateValue="@CurrentMonthYear"></CalendarHeader>
+
+            <div class="calendar-week-day">
+                <div class="calendar-week-day-child">Segunda</div>
+                <div class="calendar-week-day-child">Terça</div>
+                <div class="calendar-week-day-child">Quarta</div>
+                <div class="calendar-week-day-child">Quinta</div>
+                <div class="calendar-week-day-child">Sexta</div>
+                <div class="calendar-week-day-child">Sábado</div>
+                <div class="calendar-week-day-child">Domingo</div>
+            </div>
+            <CalendarBody WeekData="CurrentMonthWeeks" MonthDayClickMethod="MonthDayClicked"></CalendarBody>
+        </div>
+        
+        <div style="width: 40%;">
+            <CalendarHeader DateValue="@NextMonthYear"></CalendarHeader>
+            <div class="calendar-week-day">
+                <div class="calendar-week-day-child">Segunda</div>
+                <div class="calendar-week-day-child">Terça</div>
+                <div class="calendar-week-day-child">Quarta</div>
+                <div class="calendar-week-day-child">Quinta</div>
+                <div class="calendar-week-day-child">Sexta</div>
+                <div class="calendar-week-day-child">Sábado</div>
+                <div class="calendar-week-day-child">Domingo</div>
+            </div>
+            <CalendarBody WeekData="NextMonthWeeks" MonthDayClickMethod="MonthDayClicked"></CalendarBody>
+        </div>
+        
+        <button class="calendar-next" @onclick="NextMonth">
+            <svg width="7.535" height="13.179" viewBox="0 0 7.535 13.179">
+                <path d="M6.592,5.264,11.575.277a.938.938,0,0,1,1.33,0,.95.95,0,0,1,0,1.334L7.259,7.261a.94.94,0,0,1-1.3.027L.275,1.615A.942.942,0,0,1,1.6.281Z" transform="translate(0 13.179) rotate(-90)" fill="#515163" />
+            </svg>
+        </button>
+        
+    </div>
+</div>

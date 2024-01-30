@@ -1,0 +1,84 @@
+﻿@page "/fetchdata"
+
+<PageTitle>Weather forecast</PageTitle>
+
+@using WIG.Blazor.TestingComponentsApp.Data
+
+@inject WeatherForecastService ForecastService
+
+<button type="button" @onclick=@(()=>{Loaded=false;Count=0;})>TEST</button>
+
+<div>@Count / @MaxRetries</div>
+
+<WigAutoRefresh MaxRetries="@MaxRetries" RefreshRate="1000" @bind-Loaded="@Loaded" Refresh="@Refresh" LoadingSpinnerColor="#B30A3F" ShowCounters="true" OnMaxRetriesExceed=@OnError>
+    <Child>
+        <h1>Weather forecast</h1>
+
+        <p>This component demonstrates fetching data from a service.</p>
+        @if (forecasts == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Temp. (C)</th>
+                        <th>Temp. (F)</th>
+                        <th>Summary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var forecast in forecasts)
+                    {
+                        <tr>
+                            <td>@forecast.Date.ToShortDateString()</td>
+                            <td>@forecast.TemperatureC</td>
+                            <td>@forecast.TemperatureF</td>
+                            <td>@forecast.Summary</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+    </Child>
+    <ErrorTemplate>
+         <h1>Perfomed @context requests of @MaxRetries and all failed </h1>
+    </ErrorTemplate>
+</WigAutoRefresh>
+
+
+
+
+@code {
+    private WeatherForecast[]? forecasts;
+
+    public bool Loaded { get; set; } = true;
+
+    public int Count { get; set; } = 0;
+    public int MaxRetries { get; set; } = 10;
+    protected async Task Refresh()
+    {
+        Count++;
+
+        if(Count > 9)
+        {
+            forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+            Loaded = true;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        //Loaded = true;
+    }
+
+    protected void OnError()
+    {
+        //Wtver function you would like to call here
+    }
+}

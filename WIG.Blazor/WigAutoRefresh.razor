@@ -1,0 +1,161 @@
+﻿@implements IDisposable
+@if (!Loaded && _retries < MaxRetries)
+{
+    if(LoadingTemplate != null)
+    {
+        @LoadingTemplate(_retries)
+
+    }
+    else
+    {
+        <div class="WigAutoRefresh_Spinner-wrapper">
+            @GetLoadingSpinner(LoadingSpinner)
+            @if (ShowCounters)
+            {
+                <div>@_retries / @MaxRetries</div>
+            }
+        </div>
+    }
+}
+else if(ErrorTemplate!=null && _retries >= MaxRetries)
+{
+    @ErrorTemplate(_retries)
+    
+}
+else if (Child != null && Loaded)
+{
+    @Child
+}
+
+@code {
+    [Parameter]
+    public RenderFragment Child { get; set; }
+    [Parameter]
+    public RenderFragment<int> ErrorTemplate { get; set; }
+    [Parameter]
+    public RenderFragment<int> LoadingTemplate { get; set; }
+
+    [Parameter]
+    public EventCallback Refresh { get; set; }
+    [Parameter]
+    public EventCallback OnMaxRetriesExceed { get;set; }
+
+    [Parameter]
+    public int RefreshRate { get; set; } = 3000;
+
+    [Parameter]
+    public int MaxRetries { get; set; } = 100;
+
+    [Parameter]
+    public bool Loaded { get; set; } = false;
+    [Parameter]
+    public EventCallback<bool> LoadedChanged { get; set; }
+
+    [Parameter]
+    public LoadingSpinnerOption LoadingSpinner { get; set; } = new();
+
+    [Parameter]
+    public string LoadingSpinnerColor { get; set; } = "#333";
+
+    [Parameter]
+    public string LoadingSpinnerSize { get; set; } = "75px";
+
+    [Parameter]
+    public bool ShowCounters { get; set; } = false;
+
+
+
+    protected bool _timerRunning { get; set; } = false;
+
+    protected Timer _timer { get; set; }
+
+    protected int _retries { get; set; } = 0;
+
+    protected override void OnParametersSet()
+    {
+        if(!Loaded && !_timerRunning) InitiliazeTimer();
+        base.OnParametersSet();
+    }
+
+    private void InitiliazeTimer()
+    {
+        if (Refresh.HasDelegate)
+        {
+            _retries = 0;
+            _timerRunning = true;
+
+            _timer = new System.Threading.Timer(async _ =>
+            {
+                if (_retries < MaxRetries && !Loaded)
+                {
+                    await InvokeAsync(async () =>
+                      {
+                          _retries++;
+                          await Refresh.InvokeAsync();
+                      });
+                }
+                else
+                {
+                    if(_retries >= MaxRetries)
+                    {
+                        if (OnMaxRetriesExceed.HasDelegate)
+                            await InvokeAsync(async () => await OnMaxRetriesExceed.InvokeAsync() );
+                        if(LoadedChanged.HasDelegate)
+                            await InvokeAsync(async () => await LoadedChanged.InvokeAsync(true) );
+                    }
+                    _timerRunning = false;
+                    _timer.Dispose();
+                }
+            }
+           , null, 0, RefreshRate);
+        }
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+
+    public enum LoadingSpinnerOption
+    {
+        CIRCLE, CHASE, CIRCLEFADE, FLOW, GRID, PLANE, PULSE, SWING, WANDER, WAVE, BOUNCE, FOLD
+    }
+
+    private RenderFragment GetLoadingSpinner(LoadingSpinnerOption option)
+    {
+        switch(option)
+        {
+            case LoadingSpinnerOption.CIRCLE:
+                return __builder => {
+    <BlazorPro.Spinkit.Circle Color=@LoadingSpinnerColor Size=@LoadingSpinnerSize />};
+            case LoadingSpinnerOption.CHASE:
+                return __builder => {<BlazorPro.Spinkit.Chase Color=@LoadingSpinnerColor Size=@LoadingSpinnerSize />};
+            case LoadingSpinnerOption.CIRCLEFADE:
+                return __builder => {<BlazorPro.Spinkit.CircleFade Color=@LoadingSpinnerColor Size=@LoadingSpinnerSize />};
+            case LoadingSpinnerOption.FLOW:
+                return __builder => {<BlazorPro.Spinkit.Flow Color=@LoadingSpinnerColor Size=@LoadingSpinnerSize />};
+            case LoadingSpinnerOption.GRID:
+                return __builder => {<BlazorPro.Spinkit.Grid Color=@LoadingSpinnerColor Size=@LoadingSpinnerSize />};
+            case LoadingSpinnerOption.PLANE:
+                return __builder => {<BlazorPro.Spinkit.Plane Color=@LoadingSpinnerColor Size=@LoadingSpinnerSize />};
+            case LoadingSpinnerOption.PULSE:
+                return __builder => {<BlazorPro.Spinkit.Pulse Color=@LoadingSpinnerColor Size=@LoadingSpinnerSize />};
+            case LoadingSpinnerOption.SWING:
+                return __builder => {<BlazorPro.Spinkit.Swing Color=@LoadingSpinnerColor Size=@LoadingSpinnerSize />};
+            case LoadingSpinnerOption.WANDER:
+                return __builder => {<BlazorPro.Spinkit.Wander Color=@LoadingSpinnerColor Size=@LoadingSpinnerSize />};
+            case LoadingSpinnerOption.WAVE:
+                return __builder => {<BlazorPro.Spinkit.Wave Color=@LoadingSpinnerColor Size=@LoadingSpinnerSize />};
+            case LoadingSpinnerOption.BOUNCE:
+                return __builder => {<BlazorPro.Spinkit.Bounce Color=@LoadingSpinnerColor Size=@LoadingSpinnerSize />};
+            case LoadingSpinnerOption.FOLD:
+                return __builder => {<BlazorPro.Spinkit.Fold Color=@LoadingSpinnerColor Size=@LoadingSpinnerSize />};
+
+            default:
+                return __builder =>{<BlazorPro.Spinkit.Circle Color=@LoadingSpinnerColor Size=@LoadingSpinnerSize />}; 
+        }
+    }
+}
+
+
+<style>.WigAutoRefresh_Spinner-wrapper{padding-top:5%;display:flex; flex-direction:column; justify-content:center; gap:16px; align-items:center;}</style>

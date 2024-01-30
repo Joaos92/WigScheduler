@@ -1,0 +1,8 @@
+﻿@page "/"
+@namespace WIG.Blazor.TestingComponentsApp.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_Layout";
+}
+<link href="_content/BlazorPro.Spinkit/spinkit.min.css" rel="stylesheet" />
+<component type="typeof(App)" render-mode="ServerPrerendered" />

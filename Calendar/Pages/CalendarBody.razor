@@ -1,0 +1,42 @@
+﻿@inject IJSRuntime JS
+
+
+<div class="calendar-body">
+    @foreach (var week in WeekData)
+    {
+        <div class="week">
+            <div class="days">
+                @foreach (var day in week.Days)
+                {
+                    <div class="day @day.Class @(day.IsCurrentDay ? "current-day" : "")" @onclick=@(e => OnDayClick(day, e))>
+                        @day.DayNumber
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+
+@code {
+    //the list of weeks for the month calendar
+    [Parameter]
+    public List<Week> WeekData { get; set; }
+
+    //the method that represents clicking on a specific day (Month.Calendar)
+    [Parameter]
+    public Action<DayClickEventArgs> MonthDayClickMethod { get; set; }
+
+
+    private void OnDayClick(Day day, MouseEventArgs e)
+    {
+        var eventArgs = new DayClickEventArgs()
+            {
+                Day = day,
+                MouseEventArgs = e
+            };
+        MonthDayClickMethod.Invoke(eventArgs);
+
+    }
+}
+

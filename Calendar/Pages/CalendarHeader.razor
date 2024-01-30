@@ -1,0 +1,17 @@
+﻿<div class="@CSSClass">
+    <div style="display:flex; align-items: center">       
+        <div class="calendar-month">@DateValue</div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback PreviousButtonEvent { get; set; }
+    [Parameter]
+    public string DateValue { get; set; } = "";
+    [Parameter]
+    public EventCallback NextButtonEvent { get; set; }
+    [Parameter]
+    public string CSSClass { get; set; } = "calendar-header";
+
+}

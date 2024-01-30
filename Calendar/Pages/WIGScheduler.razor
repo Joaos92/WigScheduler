@@ -1,0 +1,34 @@
+﻿@switch (CurrentView)
+{
+    case View.Month:
+        <MonthCalendar SchedulePeriodClick="OnSchedulePeriodClick"></MonthCalendar>
+        break;
+
+    case null:
+        <MonthCalendar ></MonthCalendar>
+
+        break;
+}
+@code {
+
+    public enum View
+    {
+        Month
+    }
+
+    [Parameter]
+    public View? CurrentView { get; set; }
+
+    [Parameter]
+    public EventCallback<SchedulePeriod> SchedulePeriodClick { get; set; }
+
+    //Methods
+
+
+    private void OnSchedulePeriodClick(SchedulePeriod period)
+    {
+        SchedulePeriodClick.InvokeAsync(period);
+    }
+
+}
+

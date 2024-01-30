@@ -1,0 +1,29 @@
+﻿@page "/"
+
+<PageTitle>WIGScheduler</PageTitle>
+<WIGScheduler CurrentView="WIGScheduler.View.Month"  SchedulePeriodClick="OnSchedulePeriodClick"></WIGScheduler>
+
+
+@code{
+    //Properties
+
+    //Methods
+
+    //Method for when clicking an event
+
+
+    private void OnSchedulePeriodClick(SchedulePeriod period)
+    {
+        Console.WriteLine($"period?.StartDate: {period?.StartDate}");
+        Console.WriteLine($"period?.EndDate: {period?.EndDate}");
+    }
+
+
+    protected override void OnInitialized()
+    {
+        
+        base.OnInitialized();
+    }
+
+
+}
